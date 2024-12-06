@@ -1,0 +1,46 @@
+// cli commands
+
+start                          || start new task directory
+new /[task-type] /[task-data]  || creates a new task
+use /[task-header-name]        || enters a sub task directory
+back                           || exit a sub task directory
+view                           || view all children of used task directory
+view /all                      || view entire task directory
+undo                           || undo last task entry
+redo                           || redo last undo
+edit /[task-index]             || select task in current used task directory
+delete /[taks-index]           || delete a selected task
+clr                            || clears the console
+bash                           || opens bash
+cmd                            || opens command prompt
+pwr                            || opens powershell
+help                           || displays a help directory
+flush                          || remove temp files
+end                            || closes the task directory and generates an output file then navigates to seiya directory
+done /[index]                  || sets a task as done
+reversal /[index]              || sets a task as incomplete
+exit                           || closes seiya cli
+sleep                          || closes other tasks except for seiya, then
+
+
+// index range starts at 0
+
+// general overview of the folders and files
+
+seiya;
+    start-date - end-date;    //   seiya/start-date - end-date
+        header-task-1;
+            task;
+            task;
+        header-task-1;
+            task;
+                header-task-2;  //   seiya/start-date - end-date/header-task-1/header-task-2
+                    task;
+                    task;
+                    task;
+                header-task-2;
+                    task;
+    
+
+
+project started in December 6
