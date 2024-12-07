@@ -68,7 +68,7 @@ func ConsoleLine(cfg *Config) ([]string, bool) {
 	var currentWalk string = cfg.CurrentWalk
 
 	input := bufio.NewReader(os.Stdin)
-	fmt.Print("Seiya" + currentWalk + ">>")
+	fmt.Print(Green + "Seiya" + Magenta + currentWalk + Yellow + ">> " + Reset)
 	line, err := input.ReadString('\n')
 	if err != nil {
 		fmt.Println("...")
