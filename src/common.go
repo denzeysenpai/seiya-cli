@@ -1,5 +1,9 @@
 package main
 
+import (
+	"strings"
+)
+
 const (
 	STANDARD_FORMAT  = "2006-01-02 15:04:05" // FORMAT FOR LOGS
 	TIMESTAMP_FORMAT = "200601021504"        // TIMESTAMP
@@ -13,5 +17,14 @@ const (
 	Magenta          = "\033[35m"            // Color
 	Cyan             = "\033[36m"            // Color
 	Gray             = "\033[37m"            // Color
-	White            = "\033[97m"
+	White            = "\033[97m"            //
+	HEADER           = "header"              // header task
+	TASK             = "task"                // normal task
 )
+
+func (cfg *Config) GetCurrentWalk() string {
+	path := strings.ReplaceAll(cfg.CurrentWalk, Magenta, "")
+	path = strings.ReplaceAll(path, Blue, "")
+	path = cfg.SeiyaDirectory + path
+	return path
+}

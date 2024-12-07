@@ -13,7 +13,7 @@ type Config struct {
 	CurrentWalk    string `json:"currentWalk"`
 }
 
-func StartNewTaskDirectory(data []string, config *Config) {
+func (config *Config) StartNewTaskDirectory(data []string) {
 	entries, err := os.ReadDir(config.SeiyaDirectory)
 	if err != nil {
 
@@ -34,8 +34,43 @@ func StartNewTaskDirectory(data []string, config *Config) {
 
 }
 
-func NewTask(data []string) {
+func (cfg *Config) NewTask(data []string) {
+	if len(data) > 1 {
+		path := cfg.GetCurrentWalk()
 
+		entries, err := os.ReadDir(path + "/")
+		if err != nil {
+
+		}
+
+		var taskType string = data[1]
+
+		for _, entry := range entries {
+			if taskType == HEADER {
+				if entry.IsDir() && entry.Name() == data[2] {
+					fmt.Println("That name is already taken!")
+					return
+				}
+			} else if taskType == TASK {
+				if entry.Name() == data[2] {
+					fmt.Println("That name is already taken!")
+					return
+				}
+			}
+		}
+
+		if taskType == HEADER {
+
+		} else if taskType == TASK {
+			file, err := os.Create(path + "/" + data[2] + ".txt")
+
+			if err != nil {
+
+			}
+
+			defer file.Close()
+		}
+	}
 }
 
 func Edit(data []string) {
@@ -59,17 +94,52 @@ func Done(data []string) {
 }
 
 func Reversal(data []string) {
+}
 
+func (cfg *Config) View() {
+	path := cfg.GetCurrentWalk()
+	entries, err := os.ReadDir(path + "/")
+	if err != nil {
+
+	}
+
+	for index, entry := range entries {
+		if entry.IsDir() {
+			fmt.Println("[" + strconv.Itoa(index) + "]" + entry.Name() + " HEADER")
+		} else {
+			fmt.Println("[" + strconv.Itoa(index) + "]" + entry.Name())
+		}
+	}
 }
 
 func (cfg *Config) Use(data []string) *Config {
-	newWalk := cfg.CurrentWalk
-	depth := strings.Split(newWalk, "/")
-	var color string = Blue
-	if len(depth)%2 == 0 {
-		color = Magenta
+	if len(data) > 1 {
+		newWalk := cfg.CurrentWalk
+		depth := strings.Split(newWalk, "/")
+		var color string = Blue
+		if len(depth)%2 == 0 {
+			color = Magenta
+		}
+
+		path := cfg.GetCurrentWalk()
+		entries, err := os.ReadDir(path + "/")
+
+		if err != nil {
+
+		}
+
+		var toUse string
+		indexToUse, _ := strconv.Atoi(data[1])
+
+		if len(entries)-1 >= indexToUse {
+			for index, entry := range entries {
+				if index == indexToUse {
+					toUse = entry.Name()
+				}
+			}
+		}
+		cfg.CurrentWalk = newWalk + color + "/" + toUse
 	}
-	cfg.CurrentWalk = newWalk + color + "/" + data[1]
 	return cfg
 }
 

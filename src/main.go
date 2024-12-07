@@ -30,16 +30,16 @@ func main() {
 	}
 
 	for {
-		data, hasInput := ConsoleLine(cfg)
+		data, hasInput := cfg.ConsoleLine()
 		_ = data
 		_ = hasInput
 
 		if len(data) > 0 {
 			switch data[0] {
 			case "start":
-				StartNewTaskDirectory(data, cfg)
+				cfg.StartNewTaskDirectory(data)
 			case "new":
-				NewTask(data)
+				cfg.NewTask(data)
 			case "edit":
 				Edit(data)
 			case "delete":
@@ -58,12 +58,14 @@ func main() {
 				}
 			case "back":
 				cfg.Back()
+			case "view":
+				cfg.View()
 			}
 		}
 	}
 }
 
-func ConsoleLine(cfg *Config) ([]string, bool) {
+func (cfg *Config) ConsoleLine() ([]string, bool) {
 	var output []string = []string{}
 	var currentWalk string = cfg.CurrentWalk
 
