@@ -36,7 +36,7 @@ func (config *Config) StartNewTaskDirectory(data []string) {
 
 func (cfg *Config) NewTask(data []string) {
 	if len(data) > 1 {
-		path := cfg.GetCurrentWalk()
+		path := cfg.GetCurrentWalkPath()
 
 		entries, err := os.ReadDir(path + "/")
 		if err != nil {
@@ -97,7 +97,7 @@ func Reversal(data []string) {
 }
 
 func (cfg *Config) View() {
-	path := cfg.GetCurrentWalk()
+	path := cfg.GetCurrentWalkPath()
 	entries, err := os.ReadDir(path + "/")
 	if err != nil {
 
@@ -121,7 +121,7 @@ func (cfg *Config) Use(data []string) *Config {
 			color = Magenta
 		}
 
-		path := cfg.GetCurrentWalk()
+		path := cfg.GetCurrentWalkPath()
 		entries, err := os.ReadDir(path + "/")
 
 		if err != nil {

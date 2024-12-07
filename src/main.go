@@ -10,57 +10,55 @@ import (
 )
 
 func main() {
+	var cfg *Config
+	//
 	fmt.Println("Welcome to Seiya CLI!")
 	fmt.Println()
 	config, err := os.Open("./config.json")
-	var cfg *Config
+	CheckEror(err)
 
-	if err != nil {
-
-	}
 	defer config.Close()
 
 	bytes, err := io.ReadAll(config)
-	if err != nil {
+	CheckEror(err)
 
-	}
-
-	if err = json.Unmarshal(bytes, &cfg); err != nil {
-
-	}
+	err = json.Unmarshal(bytes, &cfg)
+	CheckEror(err)
 
 	for {
 		data, hasInput := cfg.ConsoleLine()
 		_ = data
 		_ = hasInput
 
-		if len(data) > 0 {
-			switch data[0] {
-			case "start":
-				cfg.StartNewTaskDirectory(data)
-			case "new":
-				cfg.NewTask(data)
-			case "edit":
-				Edit(data)
-			case "delete":
-				Delete(data)
-			case "undo":
-				Undo()
-			case "redo":
-				Redo()
-			case "done":
-				Done(data)
-			case "reversal":
-				Reversal(data)
-			case "use":
-				if len(data) > 1 {
-					cfg.Use(data)
-				}
-			case "back":
-				cfg.Back()
-			case "view":
-				cfg.View()
-			}
+		cfg.InputProcessing(data)
+	}
+}
+
+func (cfg *Config) InputProcessing(data []string) {
+	if len(data) > 0 {
+		switch data[0] {
+		case "start":
+			cfg.StartNewTaskDirectory(data)
+		case "new":
+			cfg.NewTask(data)
+		case "edit":
+			Edit(data)
+		case "delete":
+			Delete(data)
+		case "undo":
+			Undo()
+		case "redo":
+			Redo()
+		case "done":
+			Done(data)
+		case "reversal":
+			Reversal(data)
+		case "use":
+			cfg.Use(data)
+		case "back":
+			cfg.Back()
+		case "view":
+			cfg.View()
 		}
 	}
 }

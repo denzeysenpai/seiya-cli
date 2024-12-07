@@ -22,9 +22,15 @@ const (
 	TASK             = "task"                // normal task
 )
 
-func (cfg *Config) GetCurrentWalk() string {
+func (cfg *Config) GetCurrentWalkPath() string {
 	path := strings.ReplaceAll(cfg.CurrentWalk, Magenta, "")
 	path = strings.ReplaceAll(path, Blue, "")
 	path = cfg.SeiyaDirectory + path
 	return path
+}
+
+func CheckEror(err error) {
+	if err != nil {
+
+	}
 }
