@@ -38,6 +38,12 @@ func (cfg *Config) NewTask(data []string) {
 	if len(data) > 1 { // check if input data is valid
 		path := cfg.GetCurrentWalkPath()
 
+		if strings.HasSuffix(path, "seiya") {
+			fmt.Println("You can't create anything other than main task directories in this directory!")
+			fmt.Println("Use: 'start' to create a new task directory instead!")
+			return
+		}
+
 		entries, err := os.ReadDir(path + "/")
 		CheckEror(err)
 
