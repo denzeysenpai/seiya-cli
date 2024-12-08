@@ -35,16 +35,15 @@ func (config *Config) StartNewTaskDirectory(data []string) {
 }
 
 func (cfg *Config) NewTask(data []string) {
-	if len(data) > 1 {
+	if len(data) > 1 { // check if input data is valid
 		path := cfg.GetCurrentWalkPath()
 
 		entries, err := os.ReadDir(path + "/")
-		if err != nil {
-
-		}
+		CheckEror(err)
 
 		var taskType string = data[1]
 
+		// check if task name already exists
 		for _, entry := range entries {
 			if taskType == HEADER {
 				if entry.IsDir() && entry.Name() == data[2] {
@@ -60,13 +59,14 @@ func (cfg *Config) NewTask(data []string) {
 		}
 
 		if taskType == HEADER {
-
-		} else if taskType == TASK {
-			file, err := os.Create(path + "/" + data[2] + ".txt")
-
-			if err != nil {
-
+			// header is just a folder
+			if err := os.Mkdir(path+"/"+data[2], fs.ModePerm); err != nil {
+				return
 			}
+		} else if taskType == TASK {
+			// normal task is just a normal txt file
+			file, err := os.Create(path + "/" + data[2] + ".txt")
+			CheckEror(err)
 
 			defer file.Close()
 		}
