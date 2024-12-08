@@ -99,15 +99,14 @@ func Reversal(data []string) {
 func (cfg *Config) View() {
 	path := cfg.GetCurrentWalkPath()
 	entries, err := os.ReadDir(path + "/")
-	if err != nil {
+	CheckEror(err)
 
-	}
-
+	// displays the children of the current walk path
 	for index, entry := range entries {
 		if entry.IsDir() {
-			fmt.Println("[" + strconv.Itoa(index) + "]" + entry.Name() + " HEADER")
+			fmt.Println("[" + strconv.Itoa(index) + "] " + entry.Name() + " HEADER")
 		} else {
-			fmt.Println("[" + strconv.Itoa(index) + "]" + entry.Name())
+			fmt.Println("[" + strconv.Itoa(index) + "] " + entry.Name() + " TASK")
 		}
 	}
 }
