@@ -21,6 +21,7 @@ done /[index]                  || sets a task as done
 reversal /[index]              || sets a task as incomplete
 exit                           || closes seiya cli
 sleep                          || closes other tasks except for seiya, then
+write                          || enters writing mode, allows writing inside the selected file path
 
 
 // index range starts at 0
