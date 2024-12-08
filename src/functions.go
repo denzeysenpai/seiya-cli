@@ -60,7 +60,7 @@ func (cfg *Config) NewTask(data []string) {
 
 		if taskType == HEADER {
 			// header is just a folder
-			if err := os.Mkdir(path+"/"+data[2], fs.ModePerm); err != nil {
+			if err := os.Mkdir(path+"/"+data[2]+" (on going)", fs.ModePerm); err != nil {
 				return
 			}
 		} else if taskType == TASK {
@@ -100,15 +100,27 @@ func (cfg *Config) View() {
 	path := cfg.GetCurrentWalkPath()
 	entries, err := os.ReadDir(path + "/")
 	CheckEror(err)
-
-	// displays the children of the current walk path
-	for index, entry := range entries {
-		if entry.IsDir() {
-			fmt.Println("[" + strconv.Itoa(index) + "] " + entry.Name() + " HEADER")
-		} else {
-			fmt.Println("[" + strconv.Itoa(index) + "] " + entry.Name() + " TASK")
+	if strings.HasSuffix(path, ".txt") {
+		fmt.Println(Red + "This type is invalid, can't view children!" + Reset)
+		return
+	} else {
+		if len(entries) == 0 {
+			fmt.Println(Red + "This directory currently has no children!" + Reset)
+			return
 		}
 	}
+
+	// displays the children of the current walk path
+	fmt.Println(Yellow + "TYPE\tFILENAME")
+	fmt.Println(Yellow + "============================")
+	for index, entry := range entries {
+		if entry.IsDir() {
+			fmt.Println(Yellow + "HEADER\t" + Reset + "[" + strconv.Itoa(index) + "] " + entry.Name() + "\t")
+		} else {
+			fmt.Println(Yellow + "TASK\t" + Reset + "[" + strconv.Itoa(index) + "] " + entry.Name())
+		}
+	}
+	fmt.Println()
 }
 
 func (cfg *Config) Use(data []string) *Config {
