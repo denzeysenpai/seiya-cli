@@ -21,7 +21,9 @@ func (config *Config) StartNewTaskDirectory(data []string) {
 
 	for _, entry := range entries {
 		if entry.IsDir() && strings.HasSuffix(entry.Name(), "(on going)") {
-			fmt.Println("Can't start a new task directory, you have an ongoing task!")
+			fmt.Print(Red)
+			fmt.Println("Can't start a new task directory, you have an on going task!")
+			fmt.Print(Reset)
 			return
 		}
 	}
@@ -39,8 +41,10 @@ func (cfg *Config) NewTask(data []string) {
 		path := cfg.GetCurrentWalkPath()
 
 		if strings.HasSuffix(path, "seiya") {
+			fmt.Print(Red)
 			fmt.Println("You can't create anything other than main task directories in this directory!")
 			fmt.Println("Use: 'start' to create a new task directory instead!")
+			fmt.Print(Reset)
 			return
 		}
 
