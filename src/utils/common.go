@@ -1,8 +1,4 @@
-package main
-
-import (
-	"strings"
-)
+package utils
 
 const (
 	STANDARD_FORMAT  = "2006-01-02 15:04:05" // FORMAT FOR LOGS
@@ -21,13 +17,6 @@ const (
 	HEADER           = "header"              // header task
 	TASK             = "task"                // normal task
 )
-
-func (cfg *Config) GetCurrentWalkPath() string {
-	path := strings.ReplaceAll(cfg.CurrentWalk, Magenta, "")
-	path = strings.ReplaceAll(path, Blue, "")
-	path = cfg.SeiyaDirectory + path
-	return path
-}
 
 func CheckEror(err error) {
 	if err != nil {

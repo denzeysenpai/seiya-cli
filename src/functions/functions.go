@@ -1,9 +1,11 @@
-package main
+package functions
 
 import (
+	"bufio"
 	"fmt"
 	"io/fs"
 	"os"
+	"seiya-cli/src/utils"
 	"strconv"
 	"strings"
 )
@@ -11,6 +13,77 @@ import (
 type Config struct {
 	SeiyaDirectory string `json:"seiyaDirectory"`
 	CurrentWalk    string `json:"currentWalk"`
+}
+
+func ConsoleLineStart(cfg *Config) {
+	for {
+		data, hasInput := cfg.ConsoleLine()
+		_ = data
+		_ = hasInput
+
+		cfg.InputProcessing(data)
+	}
+}
+
+func (cfg *Config) InputProcessing(data []string) {
+	if len(data) > 0 {
+		switch data[0] {
+		case "start":
+			cfg.StartNewTaskDirectory(data)
+		case "new":
+			cfg.NewTask(data)
+		case "edit":
+			Edit(data)
+		case "delete":
+			Delete(data)
+		case "undo":
+			Undo()
+		case "redo":
+			Redo()
+		case "done":
+			Done(data)
+		case "reversal":
+			Reversal(data)
+		case "use":
+			cfg.Use(data)
+		case "back":
+			cfg.Back()
+		case "view":
+			cfg.View()
+		}
+	}
+}
+
+func (cfg *Config) ConsoleLine() ([]string, bool) {
+	var output []string = []string{}
+	var currentWalk string = cfg.CurrentWalk
+
+	input := bufio.NewReader(os.Stdin)
+	fmt.Print(utils.Green + "Seiya" + utils.Magenta + currentWalk + utils.Yellow + ">> " + utils.Reset)
+	line, err := input.ReadString('\n')
+	if err != nil {
+		fmt.Println("...")
+	}
+
+	line = strings.TrimSpace(line)
+
+	if len(line) > 0 {
+		var split = strings.Split(line, " /")
+		for _, data := range split {
+			if len(data) > 0 {
+				output = append(output, data)
+			}
+		}
+	}
+
+	return output, len(output) > 0
+}
+
+func (cfg *Config) GetCurrentWalkPath() string {
+	path := strings.ReplaceAll(cfg.CurrentWalk, utils.Magenta, "")
+	path = strings.ReplaceAll(path, utils.Blue, "")
+	path = cfg.SeiyaDirectory + path
+	return path
 }
 
 func (config *Config) StartNewTaskDirectory(data []string) {
@@ -21,9 +94,9 @@ func (config *Config) StartNewTaskDirectory(data []string) {
 
 	for _, entry := range entries {
 		if entry.IsDir() && strings.HasSuffix(entry.Name(), "(on going)") {
-			fmt.Print(Red)
+			fmt.Print(utils.Red)
 			fmt.Println("Can't start a new task directory, you have an on going task!")
-			fmt.Print(Reset)
+			fmt.Print(utils.Reset)
 			return
 		}
 	}
@@ -41,26 +114,26 @@ func (cfg *Config) NewTask(data []string) {
 		path := cfg.GetCurrentWalkPath()
 
 		if strings.HasSuffix(path, "seiya") {
-			fmt.Print(Red)
+			fmt.Print(utils.Red)
 			fmt.Println("You can't create anything other than main task directories in this directory!")
 			fmt.Println("Use: 'start' to create a new task directory instead!")
-			fmt.Print(Reset)
+			fmt.Print(utils.Reset)
 			return
 		}
 
 		entries, err := os.ReadDir(path + "/")
-		CheckEror(err)
+		utils.CheckEror(err)
 
 		var taskType string = data[1]
 
 		// check if task name already exists
 		for _, entry := range entries {
-			if taskType == HEADER {
+			if taskType == utils.HEADER {
 				if entry.IsDir() && entry.Name() == data[2] {
 					fmt.Println("That name is already taken!")
 					return
 				}
-			} else if taskType == TASK {
+			} else if taskType == utils.TASK {
 				if entry.Name() == data[2] {
 					fmt.Println("That name is already taken!")
 					return
@@ -68,15 +141,15 @@ func (cfg *Config) NewTask(data []string) {
 			}
 		}
 
-		if taskType == HEADER {
+		if taskType == utils.HEADER {
 			// header is just a folder
 			if err := os.Mkdir(path+"/"+data[2]+" (on going)", fs.ModePerm); err != nil {
 				return
 			}
-		} else if taskType == TASK {
+		} else if taskType == utils.TASK {
 			// normal task is just a normal txt file
 			file, err := os.Create(path + "/" + data[2] + ".txt")
-			CheckEror(err)
+			utils.CheckEror(err)
 
 			defer file.Close()
 		}
@@ -109,25 +182,25 @@ func Reversal(data []string) {
 func (cfg *Config) View() {
 	path := cfg.GetCurrentWalkPath()
 	entries, err := os.ReadDir(path + "/")
-	CheckEror(err)
+	utils.CheckEror(err)
 	if strings.HasSuffix(path, ".txt") {
-		fmt.Println(Red + "This type is invalid, can't view children!" + Reset)
+		fmt.Println(utils.Red + "This type is invalid, can't view children!" + utils.Reset)
 		return
 	} else {
 		if len(entries) == 0 {
-			fmt.Println(Red + "This directory currently has no children!" + Reset)
+			fmt.Println(utils.Red + "This directory currently has no children!" + utils.Reset)
 			return
 		}
 	}
 
 	// displays the children of the current walk path
-	fmt.Println(Yellow + "TYPE\tFILENAME")
-	fmt.Println(Yellow + "============================")
+	fmt.Println(utils.Yellow + "TYPE\tFILENAME")
+	fmt.Println(utils.Yellow + "============================")
 	for index, entry := range entries {
 		if entry.IsDir() {
-			fmt.Println(Yellow + "HEADER\t" + Reset + "[" + strconv.Itoa(index) + "] " + entry.Name() + "\t")
+			fmt.Println(utils.Yellow + "HEADER\t" + utils.Reset + "[" + strconv.Itoa(index) + "] " + entry.Name() + "\t")
 		} else {
-			fmt.Println(Yellow + "TASK\t" + Reset + "[" + strconv.Itoa(index) + "] " + entry.Name())
+			fmt.Println(utils.Yellow + "TASK\t" + utils.Reset + "[" + strconv.Itoa(index) + "] " + entry.Name())
 		}
 	}
 	fmt.Println()
@@ -137,9 +210,9 @@ func (cfg *Config) Use(data []string) *Config {
 	if len(data) > 1 {
 		newWalk := cfg.CurrentWalk
 		depth := strings.Split(newWalk, "/")
-		var color string = Blue
+		var color string = utils.Blue
 		if len(depth)%2 == 0 {
-			color = Magenta
+			color = utils.Magenta
 		}
 
 		path := cfg.GetCurrentWalkPath()
